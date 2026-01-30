@@ -40,6 +40,10 @@ will force gdlv to use nucular_gio everywhere, conversely `-tags=nucular_shiny` 
 
 # News
 
+## 2026-01-30 / Version 1.16
+* Imported non-utf-8 strings fix from Delve
+* Handled new process spawned event from Delve
+
 ## 2025-10-03 / Version 1.15
 * Fix Go version detection for Go 1.25.x
 * Fix history navigation in starlark mode
