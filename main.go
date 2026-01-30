@@ -617,6 +617,8 @@ func handleDelveEvent(ev *api.Event) {
 		fmt.Fprintf(&scrollbackOut, "Downloading debug info for %s: %s\n", ev.BinaryInfoDownloadEventDetails.ImagePath, ev.BinaryInfoDownloadEventDetails.Progress)
 	case api.EventBreakpointMaterialized:
 		// not interested
+	case api.EventProcessSpawned:
+		fmt.Fprintf(&scrollbackOut, "New process %d: %s\n", ev.ProcessSpawnedEventDetails.PID, ev.ProcessSpawnedEventDetails.Cmdline)
 	}
 }
 

@@ -13,6 +13,12 @@ import (
 	"github.com/aarzilli/gdlv/internal/dlvclient/service/api"
 )
 
+func (c *RPCClient) GetVersion() *api.GetVersionOut {
+	out := new(api.GetVersionOut)
+	c.call("GetVersion", api.GetVersionIn{}, out)
+	return out
+}
+
 func (c *RPCClient) ProcessPid() int {
 	out := new(ProcessPidOut)
 	c.call("ProcessPid", ProcessPidIn{}, out)
