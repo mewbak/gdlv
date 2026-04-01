@@ -49,6 +49,9 @@ type DebuggerState struct {
 	ExitStatus int  `json:"exitStatus"`
 	// When contains a description of the current position in a recording
 	When string
+	// StopReason describes why the process is stopped (e.g., "breakpoint",
+	// "shared library loaded"). Empty when the stop reason is unknown.
+	StopReason string `json:"stopReason,omitempty"`
 	// Filled by RPCClient.Continue, indicates an error
 	Err error `json:"-"`
 }
@@ -629,6 +632,7 @@ type Image struct {
 	Path      string
 	Address   uint64
 	LoadError string
+	Trimpath  bool
 }
 
 // Ancestor represents a goroutine ancestor
@@ -763,4 +767,20 @@ type ProcessSpawnedEventDetails struct {
 	ThreadID   int
 	Cmdline    string
 	WillFollow bool
+}
+
+type TypeInfo struct {
+	Kind     reflect.Kind
+	Size     int64
+	RealType string
+	Fields   []TypeInfoField
+	Methods  []TypeInfoMethod
+}
+
+type TypeInfoField struct {
+	Name, Type string
+}
+
+type TypeInfoMethod struct {
+	Name string
 }

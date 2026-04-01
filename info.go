@@ -614,7 +614,7 @@ func loadStacktrace(p *asyncLoad) {
 
 	oldStack := stackPanel.stack
 
-	stack, err := client.Stacktrace(curGid, stackPanel.depth, stacktraceOptions()|api.StacktraceReadDefers, nil)
+	stack, err := client.Stacktrace(curGid, stackPanel.depth, 0, stacktraceOptions()|api.StacktraceReadDefers, nil)
 	if LogOutputNice != nil {
 		logf("Stack (%d %d):\n", curGid, curThread)
 		for i := range stackPanel.stack {

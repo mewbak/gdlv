@@ -89,6 +89,7 @@ type StacktraceIn struct {
 	Defers bool // read deferred functions (equivalent to passing StacktraceReadDefers in Opts)
 	Opts   api.StacktraceOptions
 	Cfg    *api.LoadConfig
+	Skip   int // number of frames to skip
 }
 
 type StacktraceOut struct {
@@ -376,6 +377,8 @@ type ListDynamicLibrariesIn struct {
 // ListDynamicLibrariesOut holds the return values of ListDynamicLibraries
 type ListDynamicLibrariesOut struct {
 	List []api.Image
+
+	ExecutableTrimpath bool
 }
 
 // ListPackagesBuildInfoIn holds the arguments of ListPackagesBuildInfo.
@@ -505,4 +508,12 @@ type DownloadLibraryDebugInfoIn struct {
 }
 
 type DownloadLibraryDebugInfoOut struct {
+}
+
+type TypeInfoIn struct {
+	Name string
+}
+
+type TypeInfoOut struct {
+	TypeInfo *api.TypeInfo
 }

@@ -508,7 +508,7 @@ func convertStarlarkToVariable(expr string, sv starlark.Value) *api.Variable {
 }
 
 func findFrameOffset(gid int64, frameOffset int64, rx *regexp.Regexp) (frame int) {
-	frames, err := client.Stacktrace(gid, 100, 0, nil)
+	frames, err := client.Stacktrace(gid, 100, 0, 0, nil)
 	if err != nil {
 		return -1
 	}

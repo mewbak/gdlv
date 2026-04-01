@@ -1674,6 +1674,12 @@ func (env *Env) starlarkPredeclare() (starlark.StringDict, map[string]string) {
 				return starlark.None, decorateError(thread, err)
 			}
 		}
+		if len(args) > 6 && args[6] != starlark.None {
+			err := unmarshalStarlarkValue(args[6], &rpcArgs.Skip, "Skip")
+			if err != nil {
+				return starlark.None, decorateError(thread, err)
+			}
+		}
 		for _, kv := range kwargs {
 			var err error
 			switch kv[0].(starlark.String) {
@@ -1689,6 +1695,8 @@ func (env *Env) starlarkPredeclare() (starlark.StringDict, map[string]string) {
 				err = unmarshalStarlarkValue(kv[1], &rpcArgs.Opts, "Opts")
 			case "Cfg":
 				err = unmarshalStarlarkValue(kv[1], &rpcArgs.Cfg, "Cfg")
+			case "Skip":
+				err = unmarshalStarlarkValue(kv[1], &rpcArgs.Skip, "Skip")
 			default:
 				err = fmt.Errorf("unknown argument %q", kv[0])
 			}
@@ -1702,7 +1710,7 @@ func (env *Env) starlarkPredeclare() (starlark.StringDict, map[string]string) {
 		}
 		return env.interfaceToStarlarkValue(&rpcRet), nil
 	})
-	doc["stacktrace"] = "builtin stacktrace(Id, Depth, Full, Defers, Opts, Cfg)\n\nstacktrace returns stacktrace of goroutine Id up to the specified Depth.\n\nIf Full is set it will also the variable of all local variables\nand function arguments of all stack frames."
+	doc["stacktrace"] = "builtin stacktrace(Id, Depth, Full, Defers, Opts, Cfg, Skip)\n\nstacktrace returns stacktrace of goroutine Id up to the specified Depth.\n\nIf Full is set it will also the variable of all local variables\nand function arguments of all stack frames."
 	r["state"] = starlark.NewBuiltin("state", func(thread *starlark.Thread, _ *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 		if err := isCancelled(thread); err != nil {
 			return starlark.None, decorateError(thread, err)
@@ -1773,5 +1781,36 @@ func (env *Env) starlarkPredeclare() (starlark.StringDict, map[string]string) {
 		return env.interfaceToStarlarkValue(&rpcRet), nil
 	})
 	doc["toggle_breakpoint"] = "builtin toggle_breakpoint(Id, Name)\n\ntoggle_breakpoint toggles on or off a breakpoint by Name (if Name is not an\nempty string) or by ID."
+	r["type_info"] = starlark.NewBuiltin("type_info", func(thread *starlark.Thread, _ *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+		if err := isCancelled(thread); err != nil {
+			return starlark.None, decorateError(thread, err)
+		}
+		var rpcArgs rpc2.TypeInfoIn
+		var rpcRet rpc2.TypeInfoOut
+		if len(args) > 0 && args[0] != starlark.None {
+			err := unmarshalStarlarkValue(args[0], &rpcArgs.Name, "Name")
+			if err != nil {
+				return starlark.None, decorateError(thread, err)
+			}
+		}
+		for _, kv := range kwargs {
+			var err error
+			switch kv[0].(starlark.String) {
+			case "Name":
+				err = unmarshalStarlarkValue(kv[1], &rpcArgs.Name, "Name")
+			default:
+				err = fmt.Errorf("unknown argument %q", kv[0])
+			}
+			if err != nil {
+				return starlark.None, decorateError(thread, err)
+			}
+		}
+		err := env.ctx.Client().CallAPI("TypeInfo", &rpcArgs, &rpcRet)
+		if err != nil {
+			return starlark.None, err
+		}
+		return env.interfaceToStarlarkValue(&rpcRet), nil
+	})
+	doc["type_info"] = "builtin type_info(Name)\n\ntype_info returns informations about the specified type."
 	return r, doc
 }

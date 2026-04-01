@@ -335,7 +335,7 @@ func loadLocals(p *asyncLoad) {
 
 	scope := currentEvalScope()
 
-	frames, _ := client.Stacktrace(scope.GoroutineID, 1, 0, nil)
+	frames, _ := client.Stacktrace(scope.GoroutineID, 1, 0, 0, nil)
 	var fnname = ""
 	if len(frames) > 0 {
 		fnname = frames[0].Function.Name()

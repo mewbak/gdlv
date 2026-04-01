@@ -1158,7 +1158,7 @@ func stepIntoFirst(out io.Writer, stepfn func() (*api.DebuggerState, error)) err
 }
 
 func stepInto(out io.Writer, sic stepIntoCall) error {
-	stack, err := client.Stacktrace(curGid, 1, 0, nil)
+	stack, err := client.Stacktrace(curGid, 1, 0, 0, nil)
 	if err != nil {
 		return err
 	}
@@ -1756,7 +1756,7 @@ func stackCommand(out io.Writer, args string) error {
 	if err != nil {
 		depth = 5
 	}
-	frames, err := client.Stacktrace(curGid, depth, stacktraceOptions(), nil)
+	frames, err := client.Stacktrace(curGid, depth, 0, stacktraceOptions(), nil)
 	if err != nil {
 		return err
 	}
@@ -2071,7 +2071,7 @@ func libraries(out io.Writer, args string) error {
 		return nil
 	}
 
-	libs, err := client.ListDynamicLibraries()
+	libs, _, err := client.ListDynamicLibraries()
 	if err != nil {
 		return err
 	}

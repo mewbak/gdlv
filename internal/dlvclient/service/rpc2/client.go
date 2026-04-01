@@ -412,9 +412,9 @@ func (c *RPCClient) ListGoroutinesWithFilter(start, count int, filters []api.Lis
 	return out.Goroutines, out.Groups, out.Nextg, out.TooManyGroups, err
 }
 
-func (c *RPCClient) Stacktrace(goroutineId int64, depth int, opts api.StacktraceOptions, cfg *api.LoadConfig) ([]api.Stackframe, error) {
+func (c *RPCClient) Stacktrace(goroutineId int64, depth, skip int, opts api.StacktraceOptions, cfg *api.LoadConfig) ([]api.Stackframe, error) {
 	var out StacktraceOut
-	err := c.call("Stacktrace", StacktraceIn{goroutineId, depth, false, false, opts, cfg}, &out)
+	err := c.call("Stacktrace", StacktraceIn{goroutineId, depth, false, false, opts, cfg, skip}, &out)
 	return out.Locations, err
 }
 
@@ -506,10 +506,10 @@ func (c *RPCClient) Disconnect(cont bool) error {
 	return c.client.Close()
 }
 
-func (c *RPCClient) ListDynamicLibraries() ([]api.Image, error) {
+func (c *RPCClient) ListDynamicLibraries() ([]api.Image, bool, error) {
 	var out ListDynamicLibrariesOut
 	c.call("ListDynamicLibraries", ListDynamicLibrariesIn{}, &out)
-	return out.List, nil
+	return out.List, out.ExecutableTrimpath, nil
 }
 
 func (c *RPCClient) ExamineMemory(address uint64, count int) ([]byte, bool, error) {
@@ -665,6 +665,15 @@ func (c *RPCClient) CancelDownloads() error {
 func (c *RPCClient) DownloadLibraryDebugInfo(n int) error {
 	out := DownloadLibraryDebugInfoOut{}
 	return c.call("DownloadLibraryDebugInfo", DownloadLibraryDebugInfoIn{n}, out)
+}
+
+func (c *RPCClient) TypeInfo(name string) (*api.TypeInfo, error) {
+	var out TypeInfoOut
+	err := c.call("TypeInfo", TypeInfoIn{name}, &out)
+	if err != nil {
+		return nil, err
+	}
+	return out.TypeInfo, err
 }
 
 func (c *RPCClient) callWhileDrainingEvents(method string, args, reply any) error {

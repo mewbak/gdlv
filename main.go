@@ -762,7 +762,7 @@ func refreshState(toframe refreshToFrame, clearKind clearKind, state *api.Debugg
 			loc = currentLocation(state)
 
 		case refreshToSameFrame:
-			frames, err := client.Stacktrace(curGid, curFrame+1, api.StacktraceReadDefers, nil)
+			frames, err := client.Stacktrace(curGid, curFrame+1, 0, api.StacktraceReadDefers, nil)
 			if err != nil {
 				curFrame = 0
 				curDeferredCall = 0
@@ -792,7 +792,7 @@ func refreshState(toframe refreshToFrame, clearKind clearKind, state *api.Debugg
 			const runtimeprefix = "runtime."
 			curFrame = 0
 			curDeferredCall = 0
-			frames, err := client.Stacktrace(curGid, 20, 0, nil)
+			frames, err := client.Stacktrace(curGid, 20, 0, 0, nil)
 			if err != nil {
 				failstate("Stacktrace()", err)
 				return
@@ -844,7 +844,7 @@ func refreshState(toframe refreshToFrame, clearKind clearKind, state *api.Debugg
 	applyBreakpoints(failstate)
 
 	if clearKind == clearStop {
-		frames, _ := client.Stacktrace(curGid, 1, 0, nil)
+		frames, _ := client.Stacktrace(curGid, 1, 0, 0, nil)
 		if len(frames) > 0 {
 			curFrameOffset = frames[0].FrameOffset
 		}
