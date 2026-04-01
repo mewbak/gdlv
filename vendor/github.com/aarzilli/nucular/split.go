@@ -25,7 +25,9 @@ func (s *ScalableSplit) Horizontal(w *Window, bounds rect.Rect) (bounds0, bounds
 	w.LayoutSpacePushScaled(rszbounds)
 	rszbounds, out := w.Custom(nstyle.WidgetStateInactive)
 
-	out.Cursor(rszbounds, font.HorizontalResizeCursor)
+	if out != nil {
+		out.Cursor(rszbounds, font.HorizontalResizeCursor)
+	}
 
 	if w.Input().Mouse.IsClickDownInRect(mouse.ButtonLeft, rszbounds, true) {
 		s.resize = true
@@ -103,7 +105,9 @@ func (s *ScalableSplit) Vertical(w *Window, bounds rect.Rect) (bounds0, bounds1 
 	w.LayoutSpacePushScaled(rszbounds)
 	rszbounds, out := w.Custom(nstyle.WidgetStateInactive)
 
-	out.Cursor(rszbounds, font.VerticalResizeCursor)
+	if out != nil {
+		out.Cursor(rszbounds, font.VerticalResizeCursor)
+	}
 
 	if w.Input().Mouse.IsClickDownInRect(mouse.ButtonLeft, rszbounds, true) {
 		s.resize = true
